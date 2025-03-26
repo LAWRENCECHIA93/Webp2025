@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聖誕樹生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        pre {
+            font-size: 18px;
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body>
+    <h1>聖誕樹生成器</h1>
+    <pre id="treeOutput"></pre>
+    <script>
+        function tree(n) {
+            let treeStr = "";
+            treeStr += printTreeTop(n);
+            treeStr += printTreeBottom(n);
+            document.getElementById("treeOutput").innerText = treeStr;
+        }
+
+        function printTreeTop(n) {
+            let result = "";
+            for (let i = 0; i < n; i++) {
+                result += " ".repeat(n - i - 1) + "*".repeat(2 * i + 1) + "\n";
+            }
+            return result;
+        }
+
+        function printTreeBottom(n) {
+            let result = "";
+            for (let i = 0; i < Math.floor(n / 2); i++) {
+                result += " ".repeat(n - 1) + "*" + "\n";
+            }
+            return result;
+        }
+
+        tree(5);
+    </script>
+</body>
+</html>
