@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>動態新增/刪除按鈕</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIIm9Nao0YzztcQTwFspd3yD65VohhpuuCOmLASjC" 
+        crossorigin="anonymous">
+  <style>
+    body {
+      padding: 2rem;
+    }
+    .btn-space {
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <p class="mb-3">點擊下方按鈕可「新增」或「刪除」動態按鈕：</p>
+  <button onclick="addfunction()" class="btn btn-outline-primary btn-space">Add it</button>
+  <button onclick="delfunction()" class="btn btn-outline-primary">Del it</button>
+
+  <script>
+    var count = 1;
+
+    function addfunction() {
+      var btn = document.createElement("BUTTON");
+      btn.innerHTML = `CLICK ME (${count})`;
+      btn.setAttribute("id", "btn_" + count++);
+      btn.setAttribute("class", "btn btn-outline-danger d-block my-2");
+      document.body.appendChild(btn);
+    }
+
+    function delfunction() {
+      if (count > 1) {
+        var btn = document.getElementById("btn_" + --count);
+        if (btn) {
+          document.body.removeChild(btn);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
