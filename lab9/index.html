@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>景點觀光展覽資訊</title>
+    <!-- Bootstrap 美化 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>景點觀光展覽資訊</h1>
+
+        <table id="csie" class="table table-striped table-hover">
+            <tr>
+                <th>名稱</th>
+                <th>地點</th>
+                <th>票價</th>
+            </tr>
+        </table>
+
+        <button class="btn btn-danger" onclick="delOldData()">清除資料</button>
+        <button class="btn btn-primary ml-2" onclick="loadData()">載入資料</button>
+    </div>
+
+    <script>
+        var openUrl = 
+            "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6";
+
+        function loadData() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', openUrl, true);
+            xhr.send();
+
+            xhr.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    var dataset = JSON.parse(this.responseText);
+                    delOldData();
+                    addNewData(dataset);
+                }
+            };
+        }
+
+        function addNewData(dataset) {
+            var myTable = document.getElementById("csie");
+            dataset.forEach(function(data) {
+                var row = myTable.insertRow(-1);
+                row.insertCell(0).innerHTML = data['title'];
+                row.insertCell(1).innerHTML = data['showInfo'][0]['location'];
+                row.insertCell(2).innerHTML = data['showInfo'][0]['price'];
+            });
+        }
+
+        function delOldData() {
+            var myTable = document.getElementById("csie");
+            while (myTable.rows.length > 1) {
+                myTable.deleteRow(1);
+            }
+        }
+    </script>
+</body>
+</html>
