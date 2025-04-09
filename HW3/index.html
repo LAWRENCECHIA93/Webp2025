@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>景點觀光展覽資訊</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>景點觀光展覽資訊</h1>
+
+  <label for="search">搜尋名稱：</label>
+  <input type="text" id="search" placeholder="請輸入關鍵字" oninput="filterData()">
+
+  <table id="csie">
+    <tr>
+      <th>名稱</th>
+      <th>地點</th>
+      <th>票價</th>
+    </tr>
+  </table>
+
+  <div>
+    <button onclick="prevPage()">上一頁</button>
+    <span id="pageInfo">第 1 頁 / 共 N 頁</span>
+    <button onclick="nextPage()">下一頁</button>
+  </div>
+
+  <script>
+    let allData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function loadData() {
+      const openUrl = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6";
+      fetch(openUrl)
+        .then(response => response.json())
+        .then(data => {
+          allData = data;
+          filteredData = allData;
+          currentPage = 1;
+          renderTable();
+        })
+        .catch(error => {
+          console.error("資料載入失敗：", error);
+        });
+    }
+
+    function renderTable() {
+      const myTable = document.getElementById("csie");
+
+      // 清除舊資料（保留表頭）
+      while (myTable.rows.length > 1) {
+        myTable.deleteRow(1);
+      }
+
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      currentPage = Math.min(currentPage, totalPages) || 1;
+
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const pageData = filteredData.slice(start, end);
+
+      pageData.forEach(data => {
+        const row = myTable.insertRow(-1);
+        const title = data.title || "無標題";
+        const location = (data.showInfo?.[0]?.location) || "無地點";
+        const price = (data.showInfo?.[0]?.price) || "無票價";
+
+        row.insertCell(0).innerText = title;
+        row.insertCell(1).innerText = location;
+        row.insertCell(2).innerText = price;
+      });
+
+      document.getElementById("pageInfo").innerText =
+        `第 ${currentPage} 頁 / 共 ${totalPages || 1} 頁`;
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+      }
+    }
+
+    function filterData() {
+      const keyword = document.getElementById("search").value.trim().toLowerCase();
+      filteredData = allData.filter(data =>
+        data.title?.toLowerCase().includes(keyword)
+      );
+      currentPage = 1;
+      renderTable();
+    }
+
+    window.onload = loadData;
+  </script>
+</body>
+</html>
